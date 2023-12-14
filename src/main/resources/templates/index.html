@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <script src="/scripts/script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #8cff96, #ff8c8c);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Ensure full height */
+        }
+
+        header {
+            color: #ffffff;
+            text-align: center;
+            padding: 1em 0;
+            margin: 50px 0;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .SYLogo {
+            display: flex;
+            justify-content: space-around; /* Adjust as needed */
+            align-items: center;
+        }
+
+        .column {
+            display: flex;
+            align-items: center;
+        }
+
+        .column img, .column h1 {
+            margin: 0 5px; /* Adjust as needed */
+        }
+
+        .HowToUse {
+            text-align: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Spotify -> Youtube Playlist Converter</h1>
+</header>
+
+<div class="SYLogo">
+    <div class="column">
+        <img src="/imgs/spotify logo.png" alt="Spotify Logo" width="auto" height="25">
+        <h1>>></h1>
+        <img src="/imgs/youtubelogo.png" alt="YouTube Logo" width="auto" height="25">
+    </div>
+</div>
+
+<div class="HowToUse">
+    <h2 class="box-header">How To Use</h2>
+    <h5>Playlist must be public otherwise the API will not work!</h5>
+</div>
+
+
+<h3 class="box-header">Enter your Spotify Playlist URL or ID</h3>
+<div class="box" id="box2">
+    <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
+</div>
+
+<button onclick="convert()">
+    Convert now!
+</button>
+
+<script>
+    function convert() {
+        var spotifyID  = document.getElementById("spotifyID").value;
+
+        if (spotifyID != null) {
+            spotifyID = cleanID(spotifyID)
+
+
+
+
+            console.log("Spotify ID:", spotifyID);
+            console.log("Cleaned: ", cleanID(spotifyID));
+
+        }
+    }
+
+    function cleanID(id) { return id.trim().split('/').slice(-1)[0].split('?si=').slice(0)[0];}
+</script>
+
+</body>
+</html>
