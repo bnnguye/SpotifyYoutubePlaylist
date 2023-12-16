@@ -1,21 +1,78 @@
 package com.example.SpotifyToYoutube;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class SpotifyAPIController {
 
     @Value("${client.id}")
-    private String clientID;
+    private String clientId;
 
     @Value("${client.secret}")
     private String clientSecret;
+
+    private String bearerToken;
+
+    String tokenEndpoint = "https://accounts.spotify.com/api/token";
+
+    @Autowired
+    private TokenExtractor tokenExtractor;
+
+    @GetMapping("/api/get/bearerToken")
+    @ResponseBody
+    public Map<String, String> getBearerToken() {
+        String requestBody = "grant_type=client_credentials";
+        String authHeaderValue = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+
+        // Create an HttpClient
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        // Build the HTTP request
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(tokenEndpoint))
+                .header("Authorization", "Basic " + authHeaderValue)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        // Send the request and handle the response
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                String extractedToken = tokenExtractor.extractToken(response.body());
+
+                // Return a JSON object
+                Map<String, String> tokenResponse = new HashMap<>();
+                tokenResponse.put("access_token", extractedToken);
+                tokenResponse.put("token_type", "Bearer");
+                tokenResponse.put("expires_in", "3600");
+
+                return tokenResponse;
+            } else {
+                // Handle error
+                System.err.println("Error: " + response.statusCode() + " - " + response.body());
+                return Collections.emptyMap();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @GetMapping("api/test/{resource}")
     public String getString(@PathVariable String resource) {
