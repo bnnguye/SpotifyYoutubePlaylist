@@ -1,8 +1,14 @@
+function process(playlistID) {
+
+    getPlaylist(playlistID);
+}
+
+function
+
 function getBearerToken() {
     console.log("Getting bearer token..")
-    var client_id = 'CLIENT_ID';
-    var client_secret = 'CLIENT_SECRET';
-
+    var client_id =
+    var client_secret = '';
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       headers: {
@@ -13,7 +19,6 @@ function getBearerToken() {
       },
       json: true
     };
-
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         var token = body.access_token;

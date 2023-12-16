@@ -86,11 +86,10 @@
         if (spotifyID != null) {
             spotifyID = cleanID(spotifyID)
 
-
-
-
             console.log("Spotify ID:", spotifyID);
             console.log("Cleaned: ", cleanID(spotifyID));
+
+            process(cleanID(spotifyID));
 
         }
     }

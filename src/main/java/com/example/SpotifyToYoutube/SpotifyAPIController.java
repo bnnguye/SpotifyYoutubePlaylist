@@ -1,5 +1,6 @@
 package com.example.SpotifyToYoutube;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class SpotifyAPIController {
+
+    @Value("${client.id}")
+    private String clientID;
+
+    @Value("${client.secret}")
+    private String clientSecret;
 
     @GetMapping("api/test/{resource}")
     public String getString(@PathVariable String resource) {
