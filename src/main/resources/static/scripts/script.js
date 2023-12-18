@@ -1,3 +1,17 @@
+let bearerToken;
+
+function process(playlistID) {
+    console.log('Processing..');
+    getBearerToken().then(token => {
+        if (token == null) {
+            throw new Error('Bearer Token was not able to be retrieved. Please try again.');
+        }
+        console.log("Bearer Token: " + bearerToken);
+        let playlistData = getPlaylistWithToken(playlistID);
+        console.log(playlistData);
+    });
+}
+
 function getBearerToken() {
     console.log("Getting bearer token..")
     return fetch('/api/get/bearerToken')
@@ -8,32 +22,21 @@ function getBearerToken() {
             return response.text();
         })
         .then(data => {
-            return data; // Assuming data is the bearer token
+            bearerToken = data;
+            return data;
         });
 }
 
 function getPlaylistWithToken(playlistID) {
-    getBearerToken()
-        .then(accessToken => {
-            // Now you have the access token, you can make the playlist request
-            return fetch("https://api.spotify.com/v1/playlists/" + playlistID, {
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken
-                }
-            });
-        })
-        .then(response => {
+    if (bearerToken == null) { throw new Error('Bearer Token is null.')};
+    return fetch("https://api.spotify.com/v1/playlists/" + playlistID, {
+        headers: {
+            'Authorization': 'Bearer ' + bearerToken
+        }
+    }).then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            console.log(response.body);
             return response.json();
-        })
-        .then(data => {
-            // Update the HTML content with the API response
-            document.getElementById('result').innerText = JSON.stringify(data);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
         });
 }
