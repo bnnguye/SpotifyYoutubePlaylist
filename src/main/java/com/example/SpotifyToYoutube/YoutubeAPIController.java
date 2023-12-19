@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class YoutubeAPIController {
 
     @PostMapping("/api/spotify")
-    public String parsePlaylistData(@RequestBody String request) {
-
-        return "Response from Java";
+    public void parsePlaylistData(@RequestBody String request) {
+        System.out.println("Request: ");
+        System.out.println(request);
     }
 }
