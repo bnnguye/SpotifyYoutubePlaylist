@@ -2,21 +2,27 @@ let bearerToken;
 
 function process(playlistID) {
     console.log('Processing..');
-    let playlistData;
-    getBearerToken().then(token => {
-        if (token == null) {
-            throw new Error('Bearer Token was not able to be retrieved. Please try again.');
-        }
-        else {
-            console.log("Bearer Token: " + bearerToken);
-            getPlaylistWithToken(playlistID).then(playlistData => {
-                getPlaylistWithToken(playlistID).then(playlist => {
-                    filterPlaylistData(playlistData);
-                })
-            })
-        }
-    });
+
+    getBearerToken()
+        .then(token => {
+            if (token == null) {
+                throw new Error('Bearer Token was not able to be retrieved. Please try again.');
+            }
+            console.log("Bearer Token: " + token);
+            return getPlaylistWithToken(playlistID);
+        })
+        .then(playlistData => {
+            return filterPlaylistData(playlistData);
+        })
+        .then(filteredData => {
+            console.log("FilteredData: " + filteredData);
+            sendPlaylistData(filteredData);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
+
 
 function getBearerToken() {
     console.log("Getting bearer token..")
@@ -48,16 +54,27 @@ function getPlaylistWithToken(playlistID) {
 }
 
 function sendPlaylistData(playlistData) {
-    console.log("Sending playlist data to Youtube API...");
-    fetch('/api/spotify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-        // Add other headers if needed (e.g., authorization)
-      },
-      body: JSON.stringify(playlistData)
-    });
+  console.log("Sending playlist data to Youtube API...");
+  fetch('/api/spotify', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+      // Add other headers if needed (e.g., authorization)
+    },
+    body: JSON.stringify(playlistData),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    // Handle successful response if needed
+    console.log('Playlist data sent successfully');
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 }
+
 
 function filterPlaylistData(playlistData) {
     console.log("Filtering playlist data...");
@@ -67,17 +84,14 @@ function filterPlaylistData(playlistData) {
         "Tracks": {}
     }
 
-    var tracks = []
+    var tracks = [];
 
-    for (const track of playlistData.tracks) {
+    for (const track of playlistData.tracks.items) {
         tracks.push({
-            key: track.name,
-            value
+            key: track.track.name,
+            value: track.track.artists[0].name
         })
     }
-
-    console.log(playlistData.name);
-    console.log(playlistData.tracks);
-
+    return tracks;
 
 }
