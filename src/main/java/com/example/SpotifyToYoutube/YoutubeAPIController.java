@@ -1,64 +1,87 @@
 package com.example.SpotifyToYoutube;
 
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp.Browser;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp.FlowDefinition;
-import com.google.api.client.extensions.java6.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.JsonFactory;
+import com.google.common.base.Splitter;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class YoutubeAPIController {
 
-    @Value("${youtube.key")
+    @Value("${youtube.key}")
     private String key;
 
+    private static final String CLIENT_SECRETS_FILE = "/application.json";
+
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+
     @PostMapping("/api/spotify")
-    public ResponseEntity<Void> process(@RequestBody List<Object> request) {
+    public ResponseEntity<Void> process(@RequestBody List<Object> request) throws GeneralSecurityException, IOException {
         System.out.println("Request: ");
         System.out.println(request);
 
-        String result = getResults(searchBuilder(request.get(0)));
+        HashMap<String, String> dict = parse(request);
 
-        System.out.println(result);
+        List<String> videoIds = new ArrayList<>();
+
+        for (Map.Entry<String, String> track: dict.entrySet()) {
+            String result = getResults(track.getKey() + " " + track.getValue());
+
+            videoIds.add(result);
+
+            System.out.println("End result: " + result);
+        }
+
+
 
         return ResponseEntity.ok().build();
     }
 
-    public String getResults(String searchResult) throws GeneralSecurityException, IOException {
+    private String getResults(String searchResult) throws GeneralSecurityException, IOException {
+        System.out.println("Search result: " + searchResult);
 
         YouTube youtube = new YouTube.Builder(
                 com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport(),
-                JsonFactory.getDefaultInstance(),
+                GsonFactory.getDefaultInstance(),
                 null
         )
-                .setApplicationName("YourAppName")
+                .setApplicationName("playlist-generator")
                 .build();
+
+        YouTube.Search.List request = youtube.search().list("snippet");
+        request.setKey(key);
+        request.setQ(searchResult + "lyric audio");
+        request.setType("video");
+        request.setMaxResults(1L);
+
 
         try {
 
-            URL url = new URL("https://www.googleapis.com/youtube/v3/search");
+            SearchListResponse response = request.execute();
+            List<SearchResult> items = response.getItems();
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("part", searchResult);
+            // Process the search results
+            for (SearchResult item : items) {
+                System.out.println("Video ID: " + item.getId().getVideoId());
+                System.out.println("Title: " + item.getSnippet().getTitle());
+            }
+
+            return items.get(0).getId().getVideoId();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -67,8 +90,29 @@ public class YoutubeAPIController {
         return "";
     }
 
-    public String searchBuilder(Object track) {
-        return "";
+    private HashMap<String, String> parse(List<Object> data) {
+        HashMap<String, String> dictionary = new HashMap<>();
+
+        for (Object object: data) {
+            String strObject = object.toString();
+            String artist = strObject.split(",")[1].strip().replace("value=", "").replace("}", "");
+            String title = strObject.split(",")[0].replace("{key=", "");
+            dictionary.put(artist, title);
+        }
+
+        return dictionary;
+    }
+
+    private ResponseEntity<Void> createNewPlayListWithName(String name) {
+        if (name == null) {
+
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity<Void> compilePlaylist(List<String> videoIds) {
+        return ResponseEntity.ok().build();
     }
 
 }
