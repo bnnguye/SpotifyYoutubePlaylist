@@ -16,10 +16,10 @@ import java.util.Base64;
 @Controller
 public class SpotifyAPIController {
 
-    @Value("${client.id}")
+    @Value("${spotify.client.id}")
     private String clientId;
 
-    @Value("${client.secret}")
+    @Value("${spotify.client.secret}")
     private String clientSecret;
 
     private String bearerToken;

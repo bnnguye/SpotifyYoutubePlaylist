@@ -33,3 +33,4 @@ build/
 .vscode/
 
 **/resources/application.properties
+/src/main/resources/youtube-client.json
