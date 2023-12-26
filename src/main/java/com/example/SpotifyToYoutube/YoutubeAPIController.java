@@ -11,8 +11,10 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Playlist;
+import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,7 @@ import java.security.GeneralSecurityException;
 import java.util.*;
 
 @Controller
+@Slf4j
 public class YoutubeAPIController {
 
     @Value("${youtube.key}")
@@ -42,11 +45,10 @@ public class YoutubeAPIController {
 
     private static YouTube youtube = null;
 
+    private static String playlistName = null;
+
     @PostMapping("/api/spotify")
     public ResponseEntity<Void> process(@RequestBody List<Object> request) throws GeneralSecurityException, IOException {
-
-        System.out.println("Request: ");
-        System.out.println(request);
 
         getService();
 
@@ -59,16 +61,17 @@ public class YoutubeAPIController {
 
             videoIds.add(result);
 
-            System.out.println("End result: " + result);
+            log.info("End result: " + result);
         }
 
         createNewPlayListWithName(null);
+        compilePlaylist(videoIds);
 
         return ResponseEntity.ok().build();
     }
 
     private String getResults(String searchResult) throws IOException {
-        System.out.println("Search result: " + searchResult);
+        log.info("Search result: " + searchResult);
 
         YouTube.Search.List request = youtube.search().list("snippet");
         request.setKey(key);
@@ -83,8 +86,8 @@ public class YoutubeAPIController {
 
             // Process the search results
             for (SearchResult item : items) {
-                System.out.println("Video ID: " + item.getId().getVideoId());
-                System.out.println("Title: " + item.getSnippet().getTitle());
+                log.info("Video ID: " + item.getId().getVideoId());
+                log.info("Title: " + item.getSnippet().getTitle());
             }
 
             return items.get(0).getId().getVideoId();
@@ -110,6 +113,7 @@ public class YoutubeAPIController {
     }
 
     private ResponseEntity<Void> createNewPlayListWithName(String name) throws IOException {
+        log.info("Creating playlist...");
         if (name == null) {
             name = "A playlist";
         }
@@ -119,6 +123,7 @@ public class YoutubeAPIController {
         YouTube.Playlists.Insert request = youtube.playlists()
                 .insert(name, playlist);
 
+        System.out.println("Executing request...");
         Playlist response = request.execute();
 
         System.out.println("Playlist ID: " + response.getId());
@@ -126,7 +131,17 @@ public class YoutubeAPIController {
         return ResponseEntity.ok().build();
     }
 
-    private ResponseEntity<Void> compilePlaylist(List<String> videoIds) {
+    private ResponseEntity<Void> compilePlaylist(List<String> videoIds) throws IOException {
+        for (String videoId: videoIds) {
+            PlaylistItem playlistItem = new PlaylistItem();
+            playlistItem.setId(videoId);
+
+            // Define and execute the API request
+            YouTube.PlaylistItems.Insert request = youtube.playlistItems()
+                    .insert("A playlist", playlistItem);
+            PlaylistItem response = request.execute();
+            System.out.println(response);
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -140,17 +155,23 @@ public class YoutubeAPIController {
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
                         .build();
+
+        LocalServerReceiver localServerReceiver = new LocalServerReceiver.Builder().setPort(8080).build();
         Credential credential =
-                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+                new AuthorizationCodeInstalledApp(flow, localServerReceiver).authorize("user");
         return credential;
     }
 
     public static void getService() throws GeneralSecurityException, IOException {
+        System.out.println("Getting service");
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        System.out.println("httpTransport created");
         Credential credential = authorize(httpTransport);
+        System.out.println("Credentials created");
         youtube = new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(APP_NAME)
                 .build();
+        System.out.println("Service completed");
     }
 
 }
