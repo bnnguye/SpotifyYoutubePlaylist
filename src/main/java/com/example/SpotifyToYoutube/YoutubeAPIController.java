@@ -57,7 +57,7 @@ public class YoutubeAPIController {
 
         int counter = 0;
 
-        System.out.println("Total tracks to be added: " + dict.entrySet().size());
+        log.info("Total tracks to be added: " + dict.entrySet().size());
 
         for (Map.Entry<String, String> track: dict.entrySet()) {
             String result = getResults(track.getKey() + " " + track.getValue());
@@ -81,7 +81,7 @@ public class YoutubeAPIController {
         request.setKey(key);
         request.setQ(searchResult + "lyric audio");
         request.setType("video");
-        request.setMaxResults(1L);
+        request.setMaxResults(5L);
 
         try {
 
@@ -89,9 +89,11 @@ public class YoutubeAPIController {
             List<SearchResult> items = response.getItems();
 
             // Process the search results
+            System.out.println("Video List of 5 results");
+            int counter = 0;
             for (SearchResult item : items) {
-                log.info("Video ID: " + item.getId().getVideoId());
-                log.info("Title: " + item.getSnippet().getTitle());
+                counter++;
+                log.info(counter + ":: Title: " + item.getSnippet().getTitle() +" | Video ID: " + item.getId().getVideoId());
             }
 
             if (items.size() > 0 ) {
@@ -136,7 +138,7 @@ public class YoutubeAPIController {
         System.out.println("Executing request...");
         Playlist response = request.execute();
 
-        System.out.println("Playlist ID: " + response.getId());
+        log.info("Created playlist with ID: " + response.getId());
         playlistId = response.getId();
 
         return ResponseEntity.ok().build();
