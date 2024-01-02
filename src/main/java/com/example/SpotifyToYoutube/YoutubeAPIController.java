@@ -108,7 +108,6 @@ public class YoutubeAPIController {
             List<SearchResult> items = response.getItems();
 
             // Process the search results
-            System.out.println("Video List of 5 results");
             int counter = 0;
             for (SearchResult item : items) {
                 counter++;
