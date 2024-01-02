@@ -11,6 +11,10 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +25,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.security.GeneralSecurityException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @Slf4j
@@ -48,18 +55,26 @@ public class YoutubeAPIController {
 
     @PostMapping("/api/spotify")
     public ResponseEntity<Void> process(@RequestBody List<Object> request) throws GeneralSecurityException, IOException {
-
         getService();
 
-        HashMap<String, String> dict = parse(request);
+        String correctedJsonString = request.toString();
+
+        System.out.println(correctedJsonString);
+
+        Map<String, String> keyValueMap = new HashMap<>();
+
+        for (Object object: request) {
+            Map<String, String> values = parseKeyValuePairs(object.toString());
+            keyValueMap.put(values.get("key"), values.get("value"));
+        }
 
         List<String> videoIds = new ArrayList<>();
 
         int counter = 0;
 
-        log.info("Total tracks to be added: " + dict.entrySet().size());
+        log.info("Total tracks to be added: " + keyValueMap.entrySet().size());
 
-        for (Map.Entry<String, String> track: dict.entrySet()) {
+        for (Map.Entry<String, String> track: keyValueMap.entrySet()) {
             String result = getResults(track.getKey() + " " + track.getValue());
 
             videoIds.add(result);
@@ -79,9 +94,13 @@ public class YoutubeAPIController {
 
         YouTube.Search.List request = youtube.search().list("snippet");
         request.setKey(key);
-        request.setQ(searchResult + "lyric audio");
+        request.setQ(searchResult + "lyric |" + searchResult);
         request.setType("video");
         request.setMaxResults(5L);
+        request.setRelevanceLanguage("aus");
+        request.setRegionCode("AU");
+
+        System.out.println("Search: " + request.getQ());
 
         try {
 
@@ -106,19 +125,6 @@ public class YoutubeAPIController {
         }
 
         return "";
-    }
-
-    private HashMap<String, String> parse(List<Object> data) {
-        HashMap<String, String> dictionary = new HashMap<>();
-
-        for (Object object: data) {
-            String strObject = object.toString();
-            String artist = strObject.split(",")[1].strip().replace("value=", "").replace("}", "");
-            String title = strObject.split(",")[0].replace("{key=", "");
-            dictionary.put(artist, title);
-        }
-
-        return dictionary;
     }
 
     private ResponseEntity<Void> createNewPlayListWithName(String name) throws IOException {
@@ -190,6 +196,19 @@ public class YoutubeAPIController {
                 .setApplicationName(APP_NAME)
                 .build();
         System.out.println("Service completed");
+    }
+
+    private static Map<String, String> parseKeyValuePairs(String input) {
+        Map<String, String> keyValueMap = new HashMap<>();
+        Pattern pattern = Pattern.compile("\\{key=(.*?), value=(.*?)\\}");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            keyValueMap.put("key", matcher.group(1));
+            keyValueMap.put("value", matcher.group(2));
+        }
+
+        return keyValueMap;
     }
 
 }
