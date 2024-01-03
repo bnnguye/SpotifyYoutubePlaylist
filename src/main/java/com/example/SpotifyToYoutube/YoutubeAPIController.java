@@ -10,12 +10,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.*;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,11 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.security.GeneralSecurityException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Controller
 @Slf4j
@@ -37,6 +30,9 @@ public class YoutubeAPIController {
 
     @Value("${youtube.key}")
     private String key;
+
+    @Autowired
+    YoutubeAPIService service;
 
     private static final String APP_NAME = "playlist-generator";
 
@@ -55,116 +51,23 @@ public class YoutubeAPIController {
 
     @PostMapping("/api/spotify")
     public ResponseEntity<Void> process(@RequestBody List<Object> request) throws GeneralSecurityException, IOException {
-        getService();
-
-        String correctedJsonString = request.toString();
-
-        System.out.println(correctedJsonString);
-
-        Map<String, String> keyValueMap = new HashMap<>();
-
-        for (Object object: request) {
-            Map<String, String> values = parseKeyValuePairs(object.toString());
-            keyValueMap.put(values.get("key"), values.get("value"));
-        }
-
+        Map<String, String> keyValueMap = service.parse(request);
         List<String> videoIds = new ArrayList<>();
-
         int counter = 0;
 
         log.info("Total tracks to be added: " + keyValueMap.entrySet().size());
-
+        getService();
         for (Map.Entry<String, String> track: keyValueMap.entrySet()) {
-            String result = getResults(track.getKey() + " " + track.getValue());
-
+            String result = service.getResults(youtube, key, track.getKey() + " " + track.getValue());
             videoIds.add(result);
 
             counter++;
             log.info(counter + " End result: " + result);
         }
 
-        createNewPlayListWithName(null);
-        compilePlaylist(videoIds);
+        service.createNewPlayListWithName(youtube, null, playlistId);
+        service.compilePlaylist(youtube, videoIds, playlistId);
 
-        return ResponseEntity.ok().build();
-    }
-
-    private String getResults(String searchResult) throws IOException {
-        log.info("Search result: " + searchResult);
-
-        YouTube.Search.List request = youtube.search().list("snippet");
-        request.setKey(key);
-        request.setQ(searchResult + "lyric |" + searchResult);
-        request.setType("video");
-        request.setMaxResults(5L);
-        request.setRelevanceLanguage("aus");
-        request.setRegionCode("AU");
-
-        System.out.println("Search: " + request.getQ());
-
-        try {
-
-            SearchListResponse response = request.execute();
-            List<SearchResult> items = response.getItems();
-
-            // Process the search results
-            int counter = 0;
-            for (SearchResult item : items) {
-                counter++;
-                log.info(counter + ":: Title: " + item.getSnippet().getTitle() +" | Video ID: " + item.getId().getVideoId());
-            }
-
-            if (items.size() > 0 ) {
-                return items.get(0).getId().getVideoId();
-            }
-            return "";
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
-    private ResponseEntity<Void> createNewPlayListWithName(String name) throws IOException {
-        log.info("Creating playlist...");
-        if (name == null) {
-            name = "A playlist";
-        }
-
-        Playlist playlist = new Playlist();
-        PlaylistSnippet snippet = new PlaylistSnippet();
-        snippet.setTitle(name);
-        playlist.setSnippet(snippet);
-
-        YouTube.Playlists.Insert request = youtube.playlists()
-                .insert("snippet", playlist);
-
-        System.out.println("Executing request...");
-        Playlist response = request.execute();
-
-        log.info("Created playlist with ID: " + response.getId());
-        playlistId = response.getId();
-
-        return ResponseEntity.ok().build();
-    }
-
-    private ResponseEntity<Void> compilePlaylist(List<String> videoIds) throws IOException {
-        for (String videoId: videoIds) {
-            if (!videoId.equals("")) {
-                PlaylistItem playlistItem = new PlaylistItem();
-                PlaylistItemSnippet snippet = new PlaylistItemSnippet();
-                snippet.setResourceId(new ResourceId().setKind("youtube#video").setVideoId(videoId));
-                snippet.setPlaylistId(playlistId);
-                playlistItem.setSnippet(snippet);
-
-                // Define and execute the API request
-                YouTube.PlaylistItems.Insert request = youtube.playlistItems()
-                        .insert("snippet", playlistItem);
-                PlaylistItem response = request.execute();
-                System.out.println(response);
-            }
-        }
         return ResponseEntity.ok().build();
     }
 
@@ -180,34 +83,19 @@ public class YoutubeAPIController {
                         .build();
 
         LocalServerReceiver localServerReceiver = new LocalServerReceiver.Builder().setPort(8081).build();
-        Credential credential =
-                new AuthorizationCodeInstalledApp(flow, localServerReceiver).authorize("user");
-        return credential;
+        return new AuthorizationCodeInstalledApp(flow, localServerReceiver).authorize("user");
     }
 
     public static void getService() throws GeneralSecurityException, IOException {
-        System.out.println("Getting service");
+        log.info("Getting service");
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        System.out.println("httpTransport created");
+        log.info("httpTransport created");
         Credential credential = authorize(httpTransport);
-        System.out.println("Credentials created");
+        log.info("Credentials created");
         youtube = new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(APP_NAME)
                 .build();
-        System.out.println("Service completed");
-    }
-
-    private static Map<String, String> parseKeyValuePairs(String input) {
-        Map<String, String> keyValueMap = new HashMap<>();
-        Pattern pattern = Pattern.compile("\\{key=(.*?), value=(.*?)\\}");
-        Matcher matcher = pattern.matcher(input);
-
-        if (matcher.matches()) {
-            keyValueMap.put("key", matcher.group(1));
-            keyValueMap.put("value", matcher.group(2));
-        }
-
-        return keyValueMap;
+        log.info("Service completed");
     }
 
 }
