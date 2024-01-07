@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
     <script src="/scripts/script.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, #8cff96, #ff8c8c);
+            background: #000000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Ensure full height */
         }
 
         header {
@@ -30,15 +30,9 @@
         }
 
         .SYLogo {
-            display: flex;
-            justify-content: space-around; /* Adjust as needed */
-            align-items: center;
+          position: relative;
         }
 
-        .column {
-            display: flex;
-            align-items: center;
-        }
 
         .column img, .column h1 {
             margin: 0 5px; /* Adjust as needed */
@@ -52,15 +46,9 @@
 </head>
 <body>
 
-<header>
-    <h1>Spotify -> Youtube Playlist Converter</h1>
-</header>
-
-<div class="SYLogo">
-    <div class="column">
-        <img src="/imgs/spotify logo.png" alt="Spotify Logo" width="auto" height="25">
-        <h1>>></h1>
-        <img src="/imgs/youtubelogo.png" alt="YouTube Logo" width="auto" height="25">
+<div class="slide-up">
+    <div class="SYLogo" style = "position:fixed; left:80px; top:20px;">
+        <img src="/imgs/logo.png" alt="Logo" width="auto" height="160">
     </div>
 </div>
 

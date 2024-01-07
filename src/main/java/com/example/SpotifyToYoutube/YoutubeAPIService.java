@@ -17,6 +17,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class YoutubeAPIService {
 
+    String playlistName = null;
+
+    String playlistId = null;
+
 
     String getResults(YouTube youtube, String key, String searchResult) throws IOException {
         log.info("Search result: " + searchResult);
@@ -54,15 +58,15 @@ public class YoutubeAPIService {
         return "";
     }
 
-    ResponseEntity<Void> createNewPlayListWithName(YouTube youtube, String name, String playlistId) throws IOException {
+    void createNewPlayListWithName(YouTube youtube) throws IOException {
         log.info("Creating playlist...");
-        if (name == null) {
-            name = "A playlist";
+        if (playlistName == null) {
+            playlistName = "A playlist";
         }
 
         Playlist playlist = new Playlist();
         PlaylistSnippet snippet = new PlaylistSnippet();
-        snippet.setTitle(name);
+        snippet.setTitle(playlistName);
         playlist.setSnippet(snippet);
 
         YouTube.Playlists.Insert request = youtube.playlists()
@@ -74,10 +78,10 @@ public class YoutubeAPIService {
         log.info("Created playlist with ID: " + response.getId());
         playlistId = response.getId();
 
-        return ResponseEntity.ok().build();
+        ResponseEntity.ok().build();
     }
 
-    ResponseEntity<Void> compilePlaylist(YouTube youtube, List<String> videoIds, String playlistId) throws IOException {
+    void compilePlaylist(YouTube youtube, List<String> videoIds) throws IOException {
         for (String videoId: videoIds) {
             if (!videoId.equals("")) {
                 PlaylistItem playlistItem = new PlaylistItem();
@@ -93,14 +97,18 @@ public class YoutubeAPIService {
                 log.info(String.valueOf(response));
             }
         }
-        return ResponseEntity.ok().build();
+        ResponseEntity.ok().build();
     }
 
     Map<String, String> parse(List<Object> request) {
+        System.out.println(request.toString());
+        playlistName = request.get(0).toString();
+        System.out.println(playlistName);
+        request.remove(0);
 
         Map<String, String> keyValueMap = new HashMap<>();
 
-        for (Object object: request) {
+        for (Object object: (List<Object>) request.get(0)) {
             Map<String, String> values = parseKeyValuePairs(object.toString());
             keyValueMap.put(values.get("key"), values.get("value"));
         }

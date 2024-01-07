@@ -1,0 +1,14 @@
+@keyframes slideUp {
+  from {
+    top: translateY(300px);
+  }
+  to {
+    top: translateY(0px);
+  }
+}
+
+.slide-up {
+    animation-name: slideUp;
+    animation-duration: 3s;
+    animation-delay: 1s;
+}

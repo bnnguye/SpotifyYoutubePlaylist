@@ -20,27 +20,6 @@ public class YoutubeAPIControllerTest {
     YoutubeAPIController youtubeAPIController;
 
     @Test
-    private void getResultsTest(String searchResult) throws IOException {
-
-    }
-
-    @Test
-    private void parseTest() {
-        List<String> data = new ArrayList<>();
-
-    }
-
-    @Test
-    private void createNewPlayListWithNameTest(String name) {
-
-    }
-
-    @Test
-    private void compilePlaylistTest(List<String> videoIds) {
-
-    }
-
-    @Test
     public void authorizeTest() {
 
     }

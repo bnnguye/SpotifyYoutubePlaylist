@@ -15,9 +15,6 @@ function process(playlistID) {
             return filterPlaylistData(playlistData);
         })
         .then(filteredData => {
-            console.log("FilteredData: " + filteredData);
-            console.log(filteredData.Name);
-            console.log(filteredData.Tracks.items);
             sendPlaylistData(filteredData);
         })
         .catch(error => {
@@ -81,10 +78,10 @@ function sendPlaylistData(playlistData) {
 function filterPlaylistData(playlistData) {
     console.log("Filtering playlist data...");
 
-    const filteredData = {
-        "Name": playlistData.name,
-        "Tracks": {}
-    }
+    const filteredData = [
+    ]
+
+    filteredData[0] = playlistData.name,
 
     console.log(playlistData.name);
 
@@ -96,8 +93,9 @@ function filterPlaylistData(playlistData) {
             value: track.track.artists[0].name
         })
     }
-g
-    filteredData.Tracks = tracks;
+
+    filteredData[1] = tracks;
+
     return filteredData;
 
 }
