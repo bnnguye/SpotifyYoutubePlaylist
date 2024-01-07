@@ -8,7 +8,6 @@ function process(playlistID) {
             if (token == null) {
                 throw new Error('Bearer Token was not able to be retrieved. Please try again.');
             }
-            console.log("Bearer Token: " + token);
             return getPlaylistWithToken(playlistID);
         })
         .then(playlistData => {

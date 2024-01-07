@@ -108,22 +108,14 @@ public class YoutubeAPIService {
 
         Map<String, String> keyValueMap = new HashMap<>();
 
-        for (Object object: (List<Object>) request.get(0)) {
-            Map<String, String> values = parseKeyValuePairs(object.toString());
-            keyValueMap.put(values.get("key"), values.get("value"));
-        }
+        for (Map<String, String> object: (List<Map<String, String>>) request.get(0)) {
 
-        return keyValueMap;
-    }
-
-    Map<String, String> parseKeyValuePairs(String input) {
-        Map<String, String> keyValueMap = new HashMap<>();
-        Pattern pattern = Pattern.compile("\\{key=(.*?), value=(.*?)\\}");
-        Matcher matcher = pattern.matcher(input);
-
-        if (matcher.matches()) {
-            keyValueMap.put("key", matcher.group(1));
-            keyValueMap.put("value", matcher.group(2));
+            System.out.println("Object: " + object);
+            String key = object.get("key");
+            String value = object.get("value");
+            System.out.println(key + value);
+            keyValueMap.put("key", key);
+            keyValueMap.put("value", value);
         }
 
         return keyValueMap;

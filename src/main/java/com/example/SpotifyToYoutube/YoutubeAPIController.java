@@ -21,9 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.awt.Desktop;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
@@ -84,13 +81,6 @@ public class YoutubeAPIController {
         LocalServerReceiver localServerReceiver = new LocalServerReceiver.Builder().setPort(8081).build();
         AuthorizationCodeInstalledApp app = new AuthorizationCodeInstalledApp(flow, localServerReceiver);
 
-        String REDIRECT_URI = "http://localhost:8081/Callback";
-
-        String authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI).build();
-
-//        openLink(authorizationUrl);
-
-
         return app.authorize("user");
     }
 
@@ -104,19 +94,6 @@ public class YoutubeAPIController {
                 .setApplicationName(APP_NAME)
                 .build();
         log.info("Service completed");
-    }
-
-    public static void openLink(String URL) {
-        Desktop desktop = java.awt.Desktop.getDesktop();
-        try {
-            //specify the protocol along with the URL
-            URI oURL = new URI(
-                    URL);
-            desktop.browse(oURL);
-        } catch (URISyntaxException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
 }
