@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,22 +98,15 @@ public class YoutubeAPIService {
         ResponseEntity.ok().build();
     }
 
-    Map<String, String> parse(List<Object> request) {
-        System.out.println(request.toString());
+    ArrayList<TrackArtist> parse(List<Object> request) {
         playlistName = request.get(0).toString();
-        System.out.println(playlistName);
+        log.info("Playlist name: " + playlistName);
         request.remove(0);
 
-        Map<String, String> keyValueMap = new HashMap<>();
+        ArrayList<TrackArtist> keyValueMap = new ArrayList<>();
 
         for (Map<String, String> object: (List<Map<String, String>>) request.get(0)) {
-
-            System.out.println("Object: " + object);
-            String key = object.get("key");
-            String value = object.get("value");
-            System.out.println(key + value);
-            keyValueMap.put("key", key);
-            keyValueMap.put("value", value);
+            keyValueMap.add(new TrackArtist(object.get("key"), object.get("value")));
         }
 
         return keyValueMap;

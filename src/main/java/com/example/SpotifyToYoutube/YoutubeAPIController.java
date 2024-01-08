@@ -47,16 +47,15 @@ public class YoutubeAPIController {
 
     @PostMapping("/api/spotify")
     public ResponseEntity<Void> process(@RequestBody List<Object> request) throws GeneralSecurityException, IOException {
-        Map<String, String> keyValueMap = service.parse(request);
+        ArrayList<TrackArtist> keyValueMap = service.parse(request);
         List<String> videoIds = new ArrayList<>();
         int counter = 0;
 
-        log.info("Total tracks to be added: " + keyValueMap.entrySet().size());
+        log.info("Total tracks to be added: " + keyValueMap.size());
         getService();
-        for (Map.Entry<String, String> track: keyValueMap.entrySet()) {
-            String result = service.getResults(youtube, key, track.getKey() + " " + track.getValue());
+        for (TrackArtist trackArtist: keyValueMap) {
+            String result = service.getResults(youtube, key, trackArtist.getArtist() + " " + trackArtist.getTitle());
             videoIds.add(result);
-
             counter++;
             log.info(counter + " End result: " + result);
         }
