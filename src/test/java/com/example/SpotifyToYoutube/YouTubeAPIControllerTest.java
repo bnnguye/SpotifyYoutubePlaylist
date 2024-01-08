@@ -5,19 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = Spotify2YoutubeApplication.class)
-public class YoutubeAPIControllerTest {
+public class YouTubeAPIControllerTest {
 
     @Autowired
-    YoutubeAPIController youtubeAPIController;
+    YouTubeAPIController youtubeAPIController;
 
     @Test
     public void authorizeTest() {

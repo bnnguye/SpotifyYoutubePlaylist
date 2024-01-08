@@ -17,10 +17,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class YoutubeAPIServiceTest {
+public class YouTubeAPIServiceTest {
 
     @Autowired
-    YoutubeAPIService service;
+    YouTubeAPIService service;
 
     @Mock
     YouTube.Search.List youTubeSL;

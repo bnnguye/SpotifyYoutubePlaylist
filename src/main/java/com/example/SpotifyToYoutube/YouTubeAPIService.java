@@ -3,6 +3,7 @@ package com.example.SpotifyToYoutube;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class YoutubeAPIService {
+public class YouTubeAPIService {
 
     String playlistName = null;
 
@@ -79,23 +80,20 @@ public class YoutubeAPIService {
         ResponseEntity.ok().build();
     }
 
-    void compilePlaylist(YouTube youtube, List<String> videoIds) throws IOException {
-        for (String videoId: videoIds) {
-            if (!videoId.equals("")) {
-                PlaylistItem playlistItem = new PlaylistItem();
-                PlaylistItemSnippet snippet = new PlaylistItemSnippet();
-                snippet.setResourceId(new ResourceId().setKind("youtube#video").setVideoId(videoId));
-                snippet.setPlaylistId(playlistId);
-                playlistItem.setSnippet(snippet);
+    void addToPlaylist(YouTube youTube, String videoId) throws IOException {
+        if (!videoId.equals("")) {
+            PlaylistItem playlistItem = new PlaylistItem();
+            PlaylistItemSnippet snippet = new PlaylistItemSnippet();
+            snippet.setResourceId(new ResourceId().setKind("youtube#video").setVideoId(videoId));
+            snippet.setPlaylistId(playlistId);
+            playlistItem.setSnippet(snippet);
 
-                // Define and execute the API request
-                YouTube.PlaylistItems.Insert request = youtube.playlistItems()
-                        .insert("snippet", playlistItem);
-                PlaylistItem response = request.execute();
-                log.info(String.valueOf(response));
-            }
+            // Define and execute the API request
+            YouTube.PlaylistItems.Insert request = youTube.playlistItems()
+                    .insert("snippet", playlistItem);
+            PlaylistItem response = request.execute();
+            log.info(String.valueOf(response));
         }
-        ResponseEntity.ok().build();
     }
 
     ArrayList<TrackArtist> parse(List<Object> request) {

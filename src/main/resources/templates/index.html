@@ -46,46 +46,78 @@
 </head>
 <body>
 
-<div class="slide-up">
-    <div class="SYLogo" style = "position:fixed; left:80px; top:20px;">
-        <img src="/imgs/logo.png" alt="Logo" width="auto" height="160">
+    <div class="slide-up">
+        <div class="SYLogo" style = "position:fixed; left:80px; top:20px;">
+            <img src="/imgs/logo.png" alt="Logo" width="auto" height="160">
+        </div>
     </div>
-</div>
 
-<div class="HowToUse">
-    <h2 class="box-header">How To Use</h2>
-    <h5>Playlist must be public otherwise the API will not work!</h5>
-    <h3>Converting your liked songs playlist</h3>
-    <h5>Create a new playlist in Spotify, then select all the songs in your liked songs playlist and add them to the new playlist you created</h5>
-</div>
+    <div id="liveUpdates">
+
+    </div>
+
+    <div class="HowToUse">
+        <h2 class="box-header">How To Use</h2>
+        <h5>Playlist must be public otherwise the API will not work!</h5>
+        <h3>Converting your liked songs playlist</h3>
+        <h5>Create a new playlist in Spotify, then select all the songs in your liked songs playlist and add them to the new playlist you created</h5>
+    </div>
 
 
-<h3 class="box-header">Enter your Spotify Playlist URL or ID</h3>
-<div class="box" id="box2">
-    <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
-</div>
+    <h3 class="box-header">Enter your Spotify Playlist URL or ID</h3>
+    <div class="box" id="box2">
+        <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
+    </div>
 
-<button onclick="convert()">
-    Convert now!
-</button>
+    <button onclick="convert()">
+        Convert now!
+    </button>
 
-<script>
-    function convert() {
-        var spotifyID  = document.getElementById("spotifyID").value;
+    <script>
+        function convert() {
+            var spotifyID  = document.getElementById("spotifyID").value;
 
-        if (spotifyID != null) {
-            spotifyID = cleanID(spotifyID)
+            if (spotifyID != null) {
+                spotifyID = cleanID(spotifyID)
 
-            console.log("Spotify ID:", spotifyID);
-            console.log("Cleaned: ", cleanID(spotifyID));
+                console.log("Spotify ID:", spotifyID);
+                console.log("Cleaned: ", cleanID(spotifyID));
 
-            process(cleanID(spotifyID));
+                process(cleanID(spotifyID));
 
+            }
+
+        const eventSource = new EventSource("/api/live/events");
+
+        eventSource.onmessage = function(event) {
+            const liveUpdatesDiv = document.getElementById("liveUpdates");
+            liveUpdatesDiv.innerHTML = "Live Update: " + event.data;
+            console.log(event.data);
+            }
+
+        eventSource.onerror = function(event) {
+            console.error("SSE Error:", event);
+            eventSource.close();
+            }
         }
-    }
 
-    function cleanID(id) { return id.trim().split('/').slice(-1)[0].split('?si=').slice(0)[0];}
-</script>
+        function cleanID(id) { return id.trim().split('/').slice(-1)[0].split('?si=').slice(0)[0];}
+
+        function listenTrackArtist() {
+            document.addEventListener("DOMContentLoaded", function () {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/api/data", true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var responseData = JSON.parse(xhr.responseText);
+
+                        document.getElementById("response").innerHTML = responseData.message;
+                    }
+                };
+                xhr.send();
+            });
+        }
+    </script>
 
 </body>
 </html>

@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,13 +29,13 @@ import java.util.*;
 
 @Controller
 @Slf4j
-public class YoutubeAPIController {
+public class YouTubeAPIController {
 
     @Value("${youtube.key}")
     private String key;
 
     @Autowired
-    YoutubeAPIService service;
+    YouTubeAPIService service;
 
     private static final String APP_NAME = "playlist-generator";
 
@@ -48,20 +51,19 @@ public class YoutubeAPIController {
     @PostMapping("/api/spotify")
     public ResponseEntity<Void> process(@RequestBody List<Object> request) throws GeneralSecurityException, IOException {
         ArrayList<TrackArtist> keyValueMap = service.parse(request);
-        List<String> videoIds = new ArrayList<>();
-        int counter = 0;
 
         log.info("Total tracks to be added: " + keyValueMap.size());
         getService();
         for (TrackArtist trackArtist: keyValueMap) {
-            String result = service.getResults(youtube, key, trackArtist.getArtist() + " " + trackArtist.getTitle());
-            videoIds.add(result);
-            counter++;
-            log.info(counter + " End result: " + result);
+            trackArtist.setId(service.getResults(youtube, key, trackArtist.getArtist() + " " + trackArtist.getTitle()));
         }
 
         service.createNewPlayListWithName(youtube);
-        service.compilePlaylist(youtube, videoIds);
+
+        for (TrackArtist trackArtist: keyValueMap) {
+            sendLiveUpdate(trackArtist.toString());
+            service.addToPlaylist(youtube, trackArtist.getId());
+        }
 
         return ResponseEntity.ok().build();
     }
@@ -93,6 +95,18 @@ public class YoutubeAPIController {
                 .setApplicationName(APP_NAME)
                 .build();
         log.info("Service completed");
+    }
+
+    private final SseEmitter sseEmitter = new SseEmitter();
+
+    @GetMapping("/api/live/events")
+    @CrossOrigin
+    public void sendLiveUpdate(String message) {
+        try {
+            sseEmitter.send(SseEmitter.event().name("update").data(message));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
