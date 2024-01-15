@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
     <script src="/scripts/script.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,22 +83,23 @@
                 console.log("Spotify ID:", spotifyID);
                 console.log("Cleaned: ", cleanID(spotifyID));
 
+                const eventSource = new EventSource("/api/live/events");
+
+                eventSource.addEventListener("update", function(event) {
+                    const liveUpdatesDiv = document.getElementById("liveUpdates");
+                    liveUpdatesDiv.innerHTML = "Live Update: " + event.data;
+                    console.log("sse received");
+                });
+
+                eventSource.onerror = function(event) {
+                    console.error("SSE Error:", event);
+                    eventSource.close();
+                };
+
                 process(cleanID(spotifyID));
 
             }
 
-        const eventSource = new EventSource("/api/live/events");
-
-        eventSource.onmessage = function(event) {
-            const liveUpdatesDiv = document.getElementById("liveUpdates");
-            liveUpdatesDiv.innerHTML = "Live Update: " + event.data;
-            console.log(event.data);
-            }
-
-        eventSource.onerror = function(event) {
-            console.error("SSE Error:", event);
-            eventSource.close();
-            }
         }
 
         function cleanID(id) { return id.trim().split('/').slice(-1)[0].split('?si=').slice(0)[0];}

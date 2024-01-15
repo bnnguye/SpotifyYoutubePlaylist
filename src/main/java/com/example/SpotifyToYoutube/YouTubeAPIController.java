@@ -37,6 +37,9 @@ public class YouTubeAPIController {
     @Autowired
     YouTubeAPIService service;
 
+    @Autowired
+    SseController sseController;
+
     private static final String APP_NAME = "playlist-generator";
 
     private static final String CLIENT_SECRETS_FILE = "/youtube-client.json";
@@ -61,7 +64,7 @@ public class YouTubeAPIController {
         service.createNewPlayListWithName(youtube);
 
         for (TrackArtist trackArtist: keyValueMap) {
-            sendLiveUpdate(trackArtist.toString());
+            sseController.updateClient(trackArtist.toString());
             service.addToPlaylist(youtube, trackArtist.getId());
         }
 
@@ -96,17 +99,4 @@ public class YouTubeAPIController {
                 .build();
         log.info("Service completed");
     }
-
-    private final SseEmitter sseEmitter = new SseEmitter();
-
-    @GetMapping("/api/live/events")
-    @CrossOrigin
-    public void sendLiveUpdate(String message) {
-        try {
-            sseEmitter.send(SseEmitter.event().name("update").data(message));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
