@@ -11,7 +11,6 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #000000;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -25,44 +24,21 @@
             margin: 50px 0;
         }
 
-        h1 {
-            margin: 0;
-        }
-
-        .SYLogo {
-          position: relative;
-        }
-
-
-        .column img, .column h1 {
-            margin: 0 5px; /* Adjust as needed */
-        }
-
-        .HowToUse {
-            text-align: center;
-            align-items: center;
-        }
     </style>
 </head>
 <body>
 
+    <div id="grad">
+    </div>
+    <div id="rectangle"></div>
+
     <div class="slide-up">
-        <div class="SYLogo" style = "position:fixed; left:80px; top:20px;">
+        <div class="SYLogo" style = "position:relative; left:80px; top:20px;">
             <img src="/imgs/logo.png" alt="Logo" width="auto" height="160">
         </div>
     </div>
 
-    <div id="liveUpdates">
-
-    </div>
-
-    <div class="HowToUse">
-        <h2 class="box-header">How To Use</h2>
-        <h5>Playlist must be public otherwise the API will not work!</h5>
-        <h3>Converting your liked songs playlist</h3>
-        <h5>Create a new playlist in Spotify, then select all the songs in your liked songs playlist and add them to the new playlist you created</h5>
-    </div>
-
+    <div id="liveUpdates"></div>
 
     <h3 class="box-header">Enter your Spotify Playlist URL or ID</h3>
     <div class="box" id="box2">
@@ -88,7 +64,7 @@
                 eventSource.addEventListener("update", function(event) {
                     const liveUpdatesDiv = document.getElementById("liveUpdates");
                     liveUpdatesDiv.innerHTML = "Live Update: " + event.data;
-                    console.log("sse received");
+                    console.log(event.data);
                 });
 
                 eventSource.onerror = function(event) {
