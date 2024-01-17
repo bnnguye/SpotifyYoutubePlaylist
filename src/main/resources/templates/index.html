@@ -6,6 +6,8 @@
     <title>Main Page</title>
     <script src="/scripts/script.js"></script>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/particles.css">
+    <link rel="stylesheet" href="/scss/style.scss">
     <style>
         html {
             height: 100%;
@@ -17,7 +19,7 @@
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #1a3669, #000000);
+            background: linear-gradient(to bottom, #38388e, #000000);
         }
 
         header {
@@ -30,6 +32,8 @@
 
 </head>
 <body>
+
+    <div th:include="particles.html" style="z-index:-1"></div>
 
     <div id="navigation" th:include="nav.html"></div>
 

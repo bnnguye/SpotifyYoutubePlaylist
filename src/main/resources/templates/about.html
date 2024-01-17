@@ -3,15 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>How To Use</title>
+    <script src="/scripts/script.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+
     <style>
-    .HowToUse {
-        text-align: center;
-        align-items: center;
-    }
-    </style>
+        html {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #1a3669, #000000);
+        }
+
+        header {
+            color: #ffffff;
+            text-align: center;
+            padding: 1em 0;
+            margin: 50px 0;
+        }
+</style>
 
 </head>
 <body>
+    <div id="navigation" th:include="nav.html"></div>
+
 
 <div class="HowToUse">
     <h2 class="box-header">How To Use</h2>
