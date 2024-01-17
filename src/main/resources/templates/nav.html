@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <nav>
-        <div>
-            <a href="/" class="here">Home</a>
-            <a href="/about" >About</a>
-            <a href="/contact" >How To Use</a>
+<div>
+    <div style="z-index:1; position: absolute">
+        <div id="rectangle"></div>
+        <div id="triangle"></div>
+        <div class="center">
+            <a href="/about" style="position:fixed; left:40%; top:2.5%;">About</a>
+            <a href="/contact" style="position:fixed; left:57%; top:2.5%;">How To Use</a>
         </div>
-    </nav>
-</body>
-</html>
+    </div>
+
+    <div class="slide-up" id="animatedElement" style="position:absolute; z-index:2; left:45%; top:40%;">
+        <img src="/imgs/logo.png" alt="Logo" width="auto" height="100">
+    </div>
+</div>

@@ -1,16 +1,20 @@
 @keyframes slideUp {
-  50% {
-    transform: translateY(100%);
-  }
   100% {
-    transform: translateY(0%);
+    transform: translateY(-260%) scale(0.8);
   }
 }
 
 .slide-up {
+    position: absolute;
     animation-name: slideUp;
-    animation-duration: 3s;
-    animation-delay: 2s;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+}
+
+.slide-up-final-state {
+    position: absolute;
+    transform: translateY(-260%) scale(0.8);
 }
 
 #liveUpdates {
@@ -29,8 +33,26 @@
     width:1920px;
     height:50px;
     background:black;
+    position: fixed;
+    left: 0%;
+    top: 0%;
 }
 
-#grad {
-  background-image: linear-gradient(to right, rgba(255,0,0,0), rgba(255,0,0,1));
+#triangle {
+  width: 0;
+  height: 0;
+  border-left: 120px solid transparent;
+  border-right: 120px solid transparent;
+  border-bottom: 45px solid #000000; /* Change color as needed */
+  transform: rotate(180deg) translate(50%, 50%);
+  position: fixed;
+  top: 10%;
+  left: 50%;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }

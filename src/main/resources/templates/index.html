@@ -7,14 +7,17 @@
     <script src="/scripts/script.js"></script>
     <link rel="stylesheet" href="/css/styles.css">
     <style>
+        html {
+            height: 100%;
+        }
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #1a3669, #000000);
         }
 
         header {
@@ -23,20 +26,12 @@
             padding: 1em 0;
             margin: 50px 0;
         }
+</style>
 
-    </style>
 </head>
 <body>
 
-    <div id="grad">
-    </div>
-    <div id="rectangle"></div>
-
-    <div class="slide-up">
-        <div class="SYLogo" style = "position:relative; left:80px; top:20px;">
-            <img src="/imgs/logo.png" alt="Logo" width="auto" height="160">
-        </div>
-    </div>
+    <div id="navigation" th:include="nav.html"></div>
 
     <div id="liveUpdates"></div>
 
@@ -50,6 +45,20 @@
     </button>
 
     <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var animatedElement = document.getElementById('animatedElement');
+
+            function removeAnimationClass() {
+                // Add the final state class instead of directly removing the animation class
+                animatedElement.classList.remove('slide-up');
+                animatedElement.classList.add('slide-up-final-state');
+                animatedElement.removeEventListener('animationend', removeAnimationClass);
+            }
+
+            animatedElement.addEventListener('animationend', removeAnimationClass);
+        });
+
         function convert() {
             var spotifyID  = document.getElementById("spotifyID").value;
 
