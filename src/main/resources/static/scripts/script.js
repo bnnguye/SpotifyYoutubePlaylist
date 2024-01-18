@@ -92,6 +92,15 @@ function filterPlaylistData(playlistData) {
 
     document.getElementById("playlistName").innerHTML = "Playlist Name: " + playlistName;
 
+    if (playlistName != null) {
+        var elementToHide = document.getElementById('content');
+        elementToHide.style.display = 'none';
+
+        var name = document.getElementById('playlistName');
+        var liveUpdates = document.getElementById('liveUpdates');
+
+    }
+
     var tracks = [];
 
     for (const track of playlistData.tracks.items) {

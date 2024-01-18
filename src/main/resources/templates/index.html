@@ -39,16 +39,19 @@
 
     <div id="navigation" th:include="nav.html"></div>
 
-    <div id="content" class="center" style="white-space:nowrap; display: none;">
-        <h3 style="position:absolute; left:50%; top:-100%; transform: translate(-50%, -50%);">Enter your Spotify Playlist URL or ID</h3>
-        <div class="box" id="box2" style="position:absolute; left:50%; top:50%; transform: translate(-50%, -50%); opacity:90%">
+    <div id="content" style="white-space:nowrap; display: none; padding: 5px;">
+        <h3 style="position:absolute; left:50%; top:40%; transform: translate(-50%, -50%);">Enter your Spotify Playlist URL or ID</h3>
+        <div style="position:absolute; left:50%; top:50%; transform: translate(-50%, -50%); opacity:90%">
             <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
         </div>
-        <button style="position:absolute; left:50%; top:120%; transform: translate(-50%, -50%); border-radius: 7px; opacity: 75%; background-color: #000000; color: ghostwhite;" onclick="convert()">
+        <button style="position:absolute; left:50%; top:55%; transform: translate(-50%, -50%); border-radius: 7px; opacity: 75%; background-color: #000000; color: ghostwhite;" onclick="convert()">
             Convert now!
         </button>
-        <div id="playlistName" style="position:absolute; left:50%; top:200%; transform: translate(-50%, -50%);"></div>
-        <div id="liveUpdates" style="border:none;"></div>
+    </div>
+
+    <div id="processedContent">
+        <div id="playlistName" style="position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);"></div>
+        <div id="liveUpdates" style="position:absolute; left:50%; top:60%; border:none;"></div>
     </div>
 
 
