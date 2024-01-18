@@ -1,11 +1,11 @@
 @keyframes slideUp {
   100% {
-    transform: translateY(-260%) scale(0.8);
+    transform: translateY(-43vh) scale(0.8);
   }
 }
 
 .slide-up {
-    position: absolute;
+    position: relative;
     animation-name: slideUp;
     animation-duration: 1s;
     animation-delay: 1s;
@@ -14,15 +14,16 @@
 
 .slide-up-final-state {
     position: absolute;
-    transform: translateY(-260%) scale(0.8);
+    transform: translateY(-43vh) scale(0.8);
 }
 
 #liveUpdates {
+    position:relative;
+    transform:translate(0px,100px);
     border: 1px solid #ccc;
     padding: 10px;
     margin-top: 20px;
     max-width: 400px;
-    word-wrap: break-word;
 }
 
 .updateMessage {
@@ -31,7 +32,7 @@
 
 #rectangle{
     width:1920px;
-    height:50px;
+    height:25px;
     background:black;
     position: fixed;
     left: 0%;
@@ -46,13 +47,19 @@
   border-bottom: 45px solid #000000; /* Change color as needed */
   transform: rotate(180deg) translate(50%, 50%);
   position: fixed;
-  top: 10%;
+  top: 5%;
   left: 50%;
 }
 
+.center-nav {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
 .center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
+    position: absolute;
+    align-items: center;
 }

@@ -19,7 +19,9 @@
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #38388e, #000000);
+	        background: linear-gradient(#38388e, #7a1912, #207a12, #23d5ab);
+            background-size: 400% 400%;
+
         }
 
         header {
@@ -37,16 +39,17 @@
 
     <div id="navigation" th:include="nav.html"></div>
 
-    <div id="liveUpdates"></div>
-
-    <h3 class="box-header">Enter your Spotify Playlist URL or ID</h3>
-    <div class="box" id="box2">
-        <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
+    <div class="center" style="white-space:nowrap">
+        <h3 style="position:absolute; left:50%; top:-100%; transform: translate(-50%, -50%);">Enter your Spotify Playlist URL or ID</h3>
+        <div class="box" id="box2" style="position:absolute; left:50%; top:50%; transform: translate(-50%, -50%); opacity:90%">
+            <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
+        </div>
+        <button style="position:absolute; left:50%; top:120%; transform: translate(-50%, -50%); border-radius: 7px; opacity: 75%; background-color: #000000; color: ghostwhite;" onclick="convert()">
+            Convert now!
+        </button>
+        <div id="liveUpdates" style="border:none;"></div>
     </div>
 
-    <button onclick="convert()">
-        Convert now!
-    </button>
 
     <script>
 
@@ -63,6 +66,8 @@
             animatedElement.addEventListener('animationend', removeAnimationClass);
         });
 
+        setTimeout(changeBackgroundColor, 5000);
+
         function convert() {
             var spotifyID  = document.getElementById("spotifyID").value;
 
@@ -76,8 +81,7 @@
 
                 eventSource.addEventListener("update", function(event) {
                     const liveUpdatesDiv = document.getElementById("liveUpdates");
-                    liveUpdatesDiv.innerHTML = "Live Update: " + event.data;
-                    console.log(event.data);
+                    liveUpdatesDiv.innerHTML = "Current track: " + event.data;
                 });
 
                 eventSource.onerror = function(event) {
@@ -106,6 +110,10 @@
                 };
                 xhr.send();
             });
+        }
+
+        function changeBackgroundColor() {
+            document.body.classList.add('change-background');
         }
     </script>
 
