@@ -17,7 +17,8 @@
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #1a3669, #000000);
+	        background: linear-gradient(#38388e, #7a1912, #207a12, #23d5ab);
+            background-size: 400% 400%;
         }
 
         header {
@@ -26,19 +27,30 @@
             padding: 1em 0;
             margin: 50px 0;
         }
-</style>
 
+        #logo {
+            display: none;
+        }
+</style>
 </head>
-<body>
+<body style="font-family: SFPro;">
+
     <div id="navigation" th:include="nav.html"></div>
 
+    <a href="/">
+        <div style="position:absolute; z-index:2; left:50%; top:0%; transform: translate(-50%, -5%) scale(0.8);">
+            <img src="/imgs/logo.png" alt="Logo" width="auto" height="100">
+        </div>
+    </a>
 
-<div class="HowToUse">
-    <h2 class="box-header">How To Use</h2>
-    <h5>Playlist must be public otherwise the API will not work!</h5>
-    <h3>Converting your liked songs playlist</h3>
-    <h5>Create a new playlist in Spotify, then select all the songs in your liked songs playlist and add them to the new playlist you created</h5>
-</div>
+
+    <div class="HowToUse">
+
+        <h2 class="box-header">How To Use</h2>
+        <h5>Playlist must be public otherwise the API will not work!</h5>
+        <h3>Converting your liked songs playlist</h3>
+        <h5>Create a new playlist in Spotify, then select all the songs in your liked songs playlist and add them to the new playlist you created</h5>
+    </div>
 
 </body>
 </html>

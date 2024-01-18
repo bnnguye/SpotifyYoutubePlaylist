@@ -17,7 +17,8 @@
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #1a3669, #000000);
+	        background: linear-gradient(#38388e, #7a1912, #207a12, #23d5ab);
+            background-size: 400% 400%;
         }
 
         header {
@@ -26,15 +27,49 @@
             padding: 1em 0;
             margin: 50px 0;
         }
+
+        #logo {
+            display: none;
+        }
 </style>
 </head>
-<body>
+<body style="font-family: SFPro;">
 
     <div id="navigation" th:include="nav.html"></div>
 
-    <script>
+    <a href="/">
+        <div style="position:absolute; z-index:2; left:50%; top:0%; transform: translate(-50%, -5%) scale(0.8);">
+            <img src="/imgs/logo.png" alt="Logo" width="auto" height="100">
+        </div>
+    </a>
 
-    </script>
+    <div class="center">
+        <h5>Developers: Bill Nguyen</h5>
+        <h3>Hello I am the sole developer of this project/website.</h3>
+        <h5>The purpose of this website is to help users who have both a YouTube and Spotify subscription, and want to use YouTube as their main platform for music</h5>
+        <h5>Donations will go a long way to food for me (And my supportive cat)</h5>
+    </div>
+
+    <div style="position:absolute; left:50%; top:80%; transform:translate(-50%, 0%);">
+        <img src="/imgs/alvin.PNG" alt="picture of Alvin" width="150" height="auto">
+    </div>
+
+    <div>
+        <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <!-- Identify your business so that you can collect the payments. -->
+            <input type="hidden" name="business" value="bn.billnguyen@gmail.com">
+            <!-- Specify details about the contribution -->
+            <input type="hidden" name="no_recurring" value="0">
+            <input type="hidden" name="item_name" value="Develop more cool websites">
+            <input type="hidden" name="item_number" value="Feed my cat">
+            <input type="hidden" name="currency_code" value="AUD">
+            <!-- Display the payment button. -->
+            <input type="image" style="position:absolute; left:50%; top:75%; transform:translate(-50%, 0%);" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
+            <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
+        </form>
+    </div>
+
+
 
 </body>
 </html>

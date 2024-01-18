@@ -1,3 +1,16 @@
+@font-face {
+    font-family: 'SFPro';
+    src: url('fonts/sf-pro-display-regular-webfont.woff2') format('woff2'),
+         url('fonts/sf-pro-display-regular-webfont.woff') format('woff');
+    /* Add other font formats if needed */
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'SFPro', sans-serif;
+}
+
 @keyframes slideUp {
   100% {
     transform: translateY(-43vh) scale(0.8);
@@ -8,7 +21,7 @@
     position: relative;
     animation-name: slideUp;
     animation-duration: 1s;
-    animation-delay: 1s;
+    animation-delay: 1.5s;
     animation-fill-mode: forwards;
 }
 

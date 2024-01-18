@@ -3,6 +3,10 @@ let bearerToken;
 function process(playlistID) {
     console.log('Processing..');
 
+    if (playlistID.length != 22) {
+        return;
+    }
+
     getBearerToken()
         .then(token => {
             if (token == null) {
@@ -83,6 +87,10 @@ function filterPlaylistData(playlistData) {
     filteredData[0] = playlistData.name,
 
     console.log(playlistData.name);
+
+    playlistName = playlistData.name;
+
+    document.getElementById("playlistName").innerHTML = "Playlist Name: " + playlistName;
 
     var tracks = [];
 

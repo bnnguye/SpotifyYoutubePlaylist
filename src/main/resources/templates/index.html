@@ -33,13 +33,13 @@
 </style>
 
 </head>
-<body>
+<body style="font-family: SFPro;">
 
     <div th:include="particles.html" style="z-index:-1"></div>
 
     <div id="navigation" th:include="nav.html"></div>
 
-    <div class="center" style="white-space:nowrap">
+    <div id="content" class="center" style="white-space:nowrap; display: none;">
         <h3 style="position:absolute; left:50%; top:-100%; transform: translate(-50%, -50%);">Enter your Spotify Playlist URL or ID</h3>
         <div class="box" id="box2" style="position:absolute; left:50%; top:50%; transform: translate(-50%, -50%); opacity:90%">
             <input type="text" id="spotifyID" placeholder="Spotify Playlist ID">
@@ -47,26 +47,31 @@
         <button style="position:absolute; left:50%; top:120%; transform: translate(-50%, -50%); border-radius: 7px; opacity: 75%; background-color: #000000; color: ghostwhite;" onclick="convert()">
             Convert now!
         </button>
+        <div id="playlistName" style="position:absolute; left:50%; top:200%; transform: translate(-50%, -50%);"></div>
         <div id="liveUpdates" style="border:none;"></div>
     </div>
 
 
     <script>
 
+        var playlistName = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             var animatedElement = document.getElementById('animatedElement');
+            var hiddenElement = document.getElementById('content');
 
             function removeAnimationClass() {
                 // Add the final state class instead of directly removing the animation class
                 animatedElement.classList.remove('slide-up');
                 animatedElement.classList.add('slide-up-final-state');
                 animatedElement.removeEventListener('animationend', removeAnimationClass);
+
+                // Make the hidden element visible
+                hiddenElement.style.display = 'block';
             }
 
             animatedElement.addEventListener('animationend', removeAnimationClass);
         });
-
-        setTimeout(changeBackgroundColor, 5000);
 
         function convert() {
             var spotifyID  = document.getElementById("spotifyID").value;
@@ -81,7 +86,7 @@
 
                 eventSource.addEventListener("update", function(event) {
                     const liveUpdatesDiv = document.getElementById("liveUpdates");
-                    liveUpdatesDiv.innerHTML = "Current track: " + event.data;
+                    liveUpdatesDiv.innerHTML = "Converting track: " + event.data;
                 });
 
                 eventSource.onerror = function(event) {
@@ -90,9 +95,7 @@
                 };
 
                 process(cleanID(spotifyID));
-
             }
-
         }
 
         function cleanID(id) { return id.trim().split('/').slice(-1)[0].split('?si=').slice(0)[0];}
