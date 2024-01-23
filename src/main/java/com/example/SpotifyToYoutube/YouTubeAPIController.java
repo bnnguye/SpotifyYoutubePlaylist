@@ -67,6 +67,7 @@ public class YouTubeAPIController {
             sseController.updateClient(trackArtist.toString());
             service.addToPlaylist(youtube, trackArtist.getId());
         }
+        sseController.updateClient("Finished converting!");
 
         return ResponseEntity.ok().build();
     }

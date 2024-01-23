@@ -21,7 +21,7 @@ public class SseController {
     }
 
     private SseEmitter createSseEmitter() {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(-1L);
         emitter.onCompletion(() -> log.info("SseEmitter is completed"));
         emitter.onTimeout(() -> log.info("SseEmitter is timed out"));
         emitter.onError((ex) -> log.info("SseEmitter got error:", ex));
