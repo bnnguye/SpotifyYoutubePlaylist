@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.net.URI;
@@ -62,14 +61,5 @@ public class SpotifyAPIController {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @GetMapping("api/{spotifyId}")
-    public String convertPage(@PathVariable String spotifyId) {
-
-        String api = "https://api.spotify.com/v1/playlists/";
-        api += spotifyId;
-        System.out.println("Calling api request: " + api);
-        return "convert";
     }
 }
