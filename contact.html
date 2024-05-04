@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact</title>
+    <script src="/scripts/script.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+
+    <style>
+        html {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+	        background: linear-gradient(#38388e, #7a1912, #207a12, #23d5ab);
+            background-size: 400% 400%;
+        }
+
+        header {
+            color: #ffffff;
+            text-align: center;
+            padding: 1em 0;
+            margin: 50px 0;
+        }
+
+        #logo {
+            display: none;
+        }
+</style>
+</head>
+<body style="font-family: SFPro;">
+
+    <div id="navigation" th:include="nav.html"></div>
+
+    <a href="/">
+        <div style="position:absolute; z-index:2; left:50%; top:0%; transform: translate(-50%, -5%) scale(0.8);">
+            <img src="/imgs/logo.png" alt="Logo" width="auto" height="100">
+        </div>
+    </a>
+
+    <div class="center">
+        <h5>Developer: Bill Nguyen</h5>
+        <h3>Hello and welcome to my first app/website.</h3>
+        <h5>I used to have both YouTube Premium and Spotify Premium, and decided it was not worth having both.</h5>
+        <h5>So I made this! It helps you convert your Spotify playlist so you don't have to do it manually.</h5>
+        <h5>Any donations are welcome! (It will go to feeding my cat)</h5>
+    </div>
+
+    <div style="position:absolute; left:50%; top:70%; transform:translate(-50%, 0%);">
+        <img src="/imgs/alvin.PNG" alt="picture of Alvin" width="150" height="auto">
+    </div>
+
+    <div>
+        <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <!-- Identify your business so that you can collect the payments. -->
+            <input type="hidden" name="business" value="bn.billnguyen@gmail.com">
+            <!-- Specify details about the contribution -->
+            <input type="hidden" name="no_recurring" value="0">
+            <input type="hidden" name="item_name" value="Develop more cool websites">
+            <input type="hidden" name="item_number" value="Feed my cat">
+            <input type="hidden" name="currency_code" value="AUD">
+            <!-- Display the payment button. -->
+            <input type="image" style="position:absolute; left:50%; top:65%; transform:translate(-50%, 0%);" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
+            <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
+        </form>
+    </div>
+
+
+
+</body>
+</html>
